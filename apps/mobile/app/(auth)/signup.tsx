@@ -15,28 +15,28 @@ export default function SignupScreen() {
     }
     setLoading(true)
 
-    // validate invite code first
-    const { data: invite, error: codeError } = await supabase
-      .from('invite_codes')
-      .select('*')
-      .eq('code', inviteCode.trim())
-      .eq('used', false)
-      .single()
+    // Atomically claim the invite code. The RPC marks it as used in a single
+    // UPDATE ... RETURNING so two concurrent signups cannot both succeed.
+    const { data: claims, error: claimError } = await supabase
+      .rpc('claim_invite_code', { p_code: inviteCode.trim().toUpperCase() })
 
-    if (codeError || !invite) {
+    const invite = claims?.[0]
+
+    if (claimError || !invite) {
       setLoading(false)
-      Alert.alert('Invalid code', 'This invite code is not valid or has already been used.')
+      Alert.alert('Invalid code', 'This invite code is not valid, has already been used, or has expired.')
       return
     }
 
     const { data: authData, error: signupError } = await supabase.auth.signUp({ email, password })
     if (signupError || !authData.user) {
+      // Release the code back — signup failed after claiming
+      await supabase.from('invite_codes').update({ used: false }).eq('id', invite.id)
       setLoading(false)
       Alert.alert('Signup failed', signupError?.message ?? 'Unknown error')
       return
     }
 
-    // create user record and link to students
     await supabase.from('users').insert({
       id: authData.user.id,
       email,
@@ -51,7 +51,6 @@ export default function SignupScreen() {
       })
     }
 
-    await supabase.from('invite_codes').update({ used: true }).eq('id', invite.id)
     setLoading(false)
   }
 
