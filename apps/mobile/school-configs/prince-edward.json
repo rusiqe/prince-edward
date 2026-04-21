@@ -1,0 +1,9 @@
+{
+  "schoolSlug": "prince-edward",
+  "appName": "Prince Edward",
+  "bundleId": "org.rusiqe.prince-edward",
+  "primaryColour": "#003087",
+  "secondaryColour": "#FFD700",
+  "iconPath": "./assets/schools/prince-edward/icon.png",
+  "splashPath": "./assets/schools/prince-edward/splash.png"
+}

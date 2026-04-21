@@ -1,0 +1,15 @@
+{
+  "name": "prince-edward",
+  "private": true,
+  "version": "1.0.0",
+  "packageManager": "pnpm@9.0.0",
+  "scripts": {
+    "admin": "pnpm --filter admin dev",
+    "mobile": "pnpm --filter mobile start",
+    "db:migrate": "pnpm --filter database migrate",
+    "typecheck": "pnpm -r typecheck"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  }
+}
