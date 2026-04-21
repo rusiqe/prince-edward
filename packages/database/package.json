@@ -1,0 +1,9 @@
+{
+  "name": "@prince-edward/database",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "migrate": "supabase db push",
+    "reset": "supabase db reset"
+  }
+}
